@@ -6,14 +6,16 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 
 ### 🛡️ Automatische VPN/Proxy-Erkennung
 - Überprüft automatisch alle Spieler beim Server-Beitritt
-- Nutzt die proxycheck.io API für zuverlässige Erkennung
-- Erkennt verschiedene Proxy-Typen: VPN, HTTP, HTTPS, SOCKS
+- Nutzt die kostenlose vpn.otp.cx API für zuverlässige Erkennung
+- Erkennt VPN- und Proxy-Verbindungen mit hoher Genauigkeit
 - Asynchrone API-Abfragen für optimale Server-Performance
+- **Keine API-Key Registrierung erforderlich**
 
 ### ⚡ Performance-Optimierung
 - **24-Stunden Cache-System** - bereits überprüfte IPs werden zwischengespeichert
 - Asynchrone Verarbeitung verhindert Server-Lag
 - Configurable Timeouts (10 Sekunden) für API-Anfragen
+- Minimale Latenz durch effiziente API-Nutzung
 
 ### 👥 Whitelist-System
 - Verwalte Spieler, die niemals blockiert werden sollen
@@ -35,7 +37,7 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 - `/antivpn whitelist list` - Alle Whitelist-Einträge anzeigen
 
 ### ⚙️ Konfiguration
-- **API-Key Setup** - Einfache Integration mit proxycheck.io
+- **Keine API-Key erforderlich** - Funktioniert sofort nach Installation
 - **Anpassbare Kick-Nachricht** - Personalisiere die Nachricht für blockierte Spieler
 - **Debug-Modus** - Ein/Aus schaltbar über Config oder Command
 - **Whitelist** - Vordefinierte Spieler in der Konfiguration
@@ -44,14 +46,31 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 
 1. Plugin in den `plugins/` Ordner kopieren
 2. Server starten (erstellt automatisch `config.yml`)
-3. Kostenlosen API-Key auf [proxycheck.io](https://proxycheck.io) erstellen
-4. API-Key in der `config.yml` eintragen
-5. Config mit `/antivpn reload` neu laden
+3. **Fertig!** - Keine weitere Konfiguration nötig
+4. Optional: Config anpassen und mit `/antivpn reload` neu laden
 
-## API-Limits
-- **Kostenloser Plan**: 1.000 Anfragen pro Tag
-- **Kostenpflichtige Pläne**: Höhere Limits verfügbar
-- Cache-System reduziert API-Anfragen erheblich
+## API-Details
+- **Service**: vpn.otp.cx (kostenlos)
+- **Keine Registrierung erforderlich**
+- **Keine Rate-Limits** für normale Nutzung
+- Cache-System reduziert API-Anfragen und verbessert Performance
+
+### API-Antwort Beispiel
+```json
+{
+  "ip": "104.28.158.214",
+  "isVPN": true,
+  "details": {
+    "asn": "AS13335",
+    "asnOrg": "CLOUDFLARENET",
+    "isp": "Cloudflare, Inc. (CLOUD14)",
+    "hostname": null,
+    "asnMatch": true,
+    "ispMatch": true,
+    "ipListed": false
+  }
+}
+```
 
 ## Permissions
 - `antivpn.admin` - Zugriff auf alle Plugin-Befehle (Standard: OP)
@@ -62,9 +81,17 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 - **Java Version**: 8+
 
 ## Sicherheitsfeatures
-- Automatische API-Key Validierung beim Start
-- Graceful Fehlerbehandlung bei API-Ausfällen
-- Sichere Behandlung von Player-Disconnects während der Überprüfung
+- Automatische Fehlerbehandlung bei API-Ausfällen
+- Graceful Behandlung von Player-Disconnects während der Überprüfung
+- Sichere JSON-Parsing der API-Antworten
 - User-Agent für API-Anfragen zur Identifikation
+- Robuste Cache-Implementierung
 
-Das Plugin bietet eine zuverlässige, performante Lösung zum Schutz deines Minecraft-Servers vor VPN/Proxy-Nutzern mit minimaler Konfiguration und maximaler Flexibilität.
+## Vorteile gegenüber anderen Anti-VPN Plugins
+- ✅ **Kostenlos** - Keine API-Keys oder Registrierung erforderlich
+- ✅ **Sofort einsatzbereit** - Minimale Konfiguration
+- ✅ **Hohe Genauigkeit** - Moderne VPN-Erkennungstechnologie
+- ✅ **Performance-optimiert** - 24h Cache + asynchrone Verarbeitung
+- ✅ **Benutzerfreundlich** - Einfache Commands und Administration
+
+Das Plugin bietet eine zuverlässige, performante und kostenlose Lösung zum Schutz deines Minecraft-Servers vor VPN/Proxy-Nutzern mit minimaler Konfiguration und maximaler Benutzerfreundlichkeit.
