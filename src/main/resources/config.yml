@@ -1,7 +1,3 @@
-# API-Key für https://proxycheck.io (kostenloser Plan = 1.000 Anfragen/Tag)
-# Registriere dich dort und trage den Key hier ein.
-api-key: "DEIN_API_KEY"
-
 # Nachricht beim Kick, wenn ein Spieler mit VPN/Proxy joint
 kick-message: "§cVerbindungen über VPN oder Proxy sind nicht erlaubt!"
 

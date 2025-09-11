@@ -19,7 +19,6 @@ import java.util.*;
 
 public class AntiVPN extends JavaPlugin implements Listener {
 
-    private String apiKey;
     private String kickMessage;
     private List<String> whitelist;
     private boolean debugMode;
@@ -32,26 +31,19 @@ public class AntiVPN extends JavaPlugin implements Listener {
         loadConfigValues();
         Bukkit.getPluginManager().registerEvents(this, this);
         getLogger().info("AntiVPN Plugin aktiviert!");
-
-        // API-Key Validierung
-        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("DEIN_API_KEY")) {
-            getLogger().severe("FEHLER: Kein gültiger API-Key konfiguriert! Plugin wird nicht funktionieren.");
-            getLogger().severe("Bitte registriere dich auf https://proxycheck.io und trage deinen API-Key in die config.yml ein.");
-        }
+        getLogger().info("Verwende vpn.otp.cx API für VPN/Proxy Erkennung");
     }
 
     private void loadConfigValues() {
         saveDefaultConfig();
         reloadConfig();
         FileConfiguration config = getConfig();
-        this.apiKey = config.getString("api-key", "");
         this.kickMessage = config.getString("kick-message", "§cVPN/Proxy Verbindungen sind hier nicht erlaubt!");
         this.whitelist = new ArrayList<>(config.getStringList("whitelist"));
         this.debugMode = config.getBoolean("debug-mode", false);
 
         if (debugMode) {
             getLogger().info("Debug-Modus aktiviert");
-            getLogger().info("API-Key gesetzt: " + (!apiKey.isEmpty() && !apiKey.equals("DEIN_API_KEY")));
             getLogger().info("Whitelist: " + whitelist);
         }
     }
@@ -71,12 +63,6 @@ public class AntiVPN extends JavaPlugin implements Listener {
             if (debugMode) {
                 getLogger().info("Spieler " + name + " ist in der Whitelist - überspringe VPN-Check");
             }
-            return;
-        }
-
-        // API-Key Check
-        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("DEIN_API_KEY")) {
-            getLogger().warning("Kein API-Key konfiguriert - kann VPN-Check für " + name + " nicht durchführen");
             return;
         }
 
@@ -133,10 +119,10 @@ public class AntiVPN extends JavaPlugin implements Listener {
             }
         }
 
-        // API-Anfrage
-        String urlStr = "https://proxycheck.io/v2/" + ip + "?key=" + apiKey + "&vpn=1&asn=1";
+        // API-Anfrage an vpn.otp.cx
+        String urlStr = "https://vpn.otp.cx/check?ip=" + ip;
         if (debugMode) {
-            getLogger().info("API-Anfrage an: " + urlStr.replace(apiKey, "***"));
+            getLogger().info("API-Anfrage an: " + urlStr);
         }
 
         URL url = new URL(urlStr);
@@ -168,28 +154,27 @@ public class AntiVPN extends JavaPlugin implements Listener {
             getLogger().info("API Response: " + resp);
         }
 
-        // Erweiterte Auswertung der API-Antwort
+        // Auswertung der vpn.otp.cx API-Antwort
         boolean blocked = false;
-        String respLower = resp.toLowerCase().replaceAll("\\s+", ""); // Entferne alle Whitespace-Zeichen
 
-        // Prüfe verschiedene Indikatoren
-        if (respLower.contains("\"proxy\":\"yes\"") ||
-                respLower.contains("\"vpn\":\"yes\"") ||
-                respLower.contains("\"type\":\"vpn\"") ||
-                respLower.contains("\"type\":\"proxy\"") ||
-                respLower.contains("\"type\":\"socks") ||
-                respLower.contains("\"type\":\"http") ||
-                respLower.contains("\"type\":\"https")) {
+        // Prüfe auf "isVPN":true in der JSON-Antwort
+        if (resp.toLowerCase().contains("\"isvpn\":true")) {
             blocked = true;
         }
 
-        // Prüfe auch auf Fehler in der API-Antwort
-        if (resp.toLowerCase().contains("\"status\":\"error\"")) {
-            getLogger().warning("API-Fehler für IP " + ip + ": " + resp);
+        // Zusätzliche Sicherheitsprüfung: Prüfe auch auf andere Varianten
+        if (resp.toLowerCase().contains("\"isvpn\": true")) {
+            blocked = true;
         }
 
         if (debugMode) {
             getLogger().info("Finale Entscheidung für IP " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
+            if (resp.toLowerCase().contains("\"isvpn\"")) {
+                // Extrahiere weitere Details für Debug-Ausgabe
+                if (resp.contains("\"asn\":")) {
+                    getLogger().info("Zusätzliche Details verfügbar in API-Antwort");
+                }
+            }
         }
 
         // Cache aktualisieren
