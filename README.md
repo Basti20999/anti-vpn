@@ -50,7 +50,7 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 4. Optional: Config anpassen und mit `/antivpn reload` neu laden
 
 ## API-Details
-- **Service**: vpn.otp.cx (kostenlos)
+- **Service**: fastasfuck.net (kostenlos)
 - **Keine Registrierung erforderlich**
 - **Keine Rate-Limits** für normale Nutzung
 - Cache-System reduziert API-Anfragen und verbessert Performance
