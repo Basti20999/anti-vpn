@@ -31,7 +31,7 @@ public class AntiVPN extends JavaPlugin implements Listener {
         loadConfigValues();
         Bukkit.getPluginManager().registerEvents(this, this);
         getLogger().info("AntiVPN Plugin aktiviert!");
-        getLogger().info("Verwende vpn.otp.cx API für VPN/Proxy Erkennung");
+        getLogger().info("Verwende api.fastasfuck.net API für VPN/Proxy Erkennung");
     }
 
     private void loadConfigValues() {
@@ -120,7 +120,7 @@ public class AntiVPN extends JavaPlugin implements Listener {
         }
 
         // API-Anfrage an vpn.otp.cx
-        String urlStr = "https://vpn.otp.cx/check?ip=" + ip;
+        String urlStr = "https://api.fastasfuck.net/vpn/check/" + ip;
         if (debugMode) {
             getLogger().info("API-Anfrage an: " + urlStr);
         }
