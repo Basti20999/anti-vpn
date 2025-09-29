@@ -6,7 +6,7 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 
 ### 🛡️ Automatische VPN/Proxy-Erkennung
 - Überprüft automatisch alle Spieler beim Server-Beitritt
-- Nutzt die kostenlose vpn.otp.cx API für zuverlässige Erkennung
+- Nutzt die kostenlose fastasfuck.net API für zuverlässige Erkennung
 - Erkennt VPN- und Proxy-Verbindungen mit hoher Genauigkeit
 - Asynchrone API-Abfragen für optimale Server-Performance
 - **Keine API-Key Registrierung erforderlich**
