@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
@@ -59,41 +59,33 @@ public class AntiVPN extends JavaPlugin implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        String name = player.getName();
+    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        String name = event.getName();
+        String ip = event.getAddress().getHostAddress();
 
-        if (player.getAddress() == null) return;
-        String ip = player.getAddress().getAddress().getHostAddress();
-
-        if (debugMode) getLogger().info("Spieler " + name + " joined mit IP: " + ip);
+        if (debugMode) getLogger().info("Spieler " + name + " verbindet sich von IP: " + ip);
 
         if (whitelist.contains(name)) {
             if (debugMode) getLogger().info("Spieler " + name + " ist in der Whitelist - überspringe VPN-Check");
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try {
-                if (debugMode) getLogger().info("Starte VPN-Check für IP: " + ip);
+        try {
+            if (debugMode) getLogger().info("Starte VPN-Check für IP: " + ip);
 
-                boolean blocked = isBlockedIP(ip);
+            boolean blocked = isBlockedIP(ip);
 
-                if (debugMode) getLogger().info("VPN-Check Ergebnis für " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
+            if (debugMode) getLogger().info("VPN-Check Ergebnis für " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
 
-                if (blocked) {
-                    Bukkit.getScheduler().runTask(this, () -> {
-                        if (player.isOnline()) {
-                            player.kick(LegacyComponentSerializer.legacySection().deserialize(kickMessage));
-                            getLogger().info("Spieler " + name + " wurde wegen VPN/Proxy geblockt. (" + ip + ")");
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                getLogger().warning("VPN-Check für IP " + ip + " fehlgeschlagen, Spieler wird zugelassen: " + e.getMessage());
-                if (debugMode) e.printStackTrace();
+            if (blocked) {
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        LegacyComponentSerializer.legacySection().deserialize(kickMessage));
+                getLogger().info("Spieler " + name + " wurde wegen VPN/Proxy abgelehnt. (" + ip + ")");
             }
-        });
+        } catch (Exception e) {
+            getLogger().warning("VPN-Check für IP " + ip + " fehlgeschlagen, Spieler wird zugelassen: " + e.getMessage());
+            if (debugMode) e.printStackTrace();
+        }
     }
 
     private boolean isBlockedIP(String ip) throws Exception {
