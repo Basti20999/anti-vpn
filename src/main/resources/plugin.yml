@@ -5,10 +5,10 @@ api-version: '1.21'
 authors: [ Basti20999 ]
 commands:
   antivpn:
-    description: AntiVPN Befehle
+    description: AntiVPN commands
     usage: /antivpn <reload|whitelist>
     permission: antivpn.admin
 permissions:
   antivpn.admin:
-    description: Zugriff auf alle AntiVPN Befehle
+    description: Access to all AntiVPN commands
     default: op

@@ -1,61 +1,61 @@
 # AntiVPN Plugin
 
-Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch erkennt und blockiert.
+A Minecraft Bukkit/Spigot plugin that automatically detects and blocks VPN and proxy connections.
 
 ## Features
 
-### 🛡️ Automatische VPN/Proxy-Erkennung
-- Überprüft automatisch alle Spieler beim Server-Beitritt
-- Nutzt die kostenlose fastasfuck.net API für zuverlässige Erkennung
-- Erkennt VPN- und Proxy-Verbindungen mit hoher Genauigkeit
-- Asynchrone API-Abfragen für optimale Server-Performance
-- **Keine API-Key Registrierung erforderlich**
+### Shield Automatic VPN/Proxy Detection
+- Automatically checks all players on server join
+- Uses the free fastasfuck.net API for reliable detection
+- Detects VPN and proxy connections with high accuracy
+- Asynchronous API requests for optimal server performance
+- **No API key registration required**
 
-### ⚡ Performance-Optimierung
-- **24-Stunden Cache-System** - bereits überprüfte IPs werden zwischengespeichert
-- Asynchrone Verarbeitung verhindert Server-Lag
-- Configurable Timeouts (10 Sekunden) für API-Anfragen
-- Minimale Latenz durch effiziente API-Nutzung
+### Performance Optimization
+- **24-hour cache system** - already checked IPs are cached
+- Asynchronous processing prevents server lag
+- Configurable timeouts (10 seconds) for API requests
+- Minimal latency through efficient API usage
 
-### 👥 Whitelist-System
-- Verwalte Spieler, die niemals blockiert werden sollen
-- Einfache Befehle zum Hinzufügen/Entfernen von Spielern
-- Whitelist wird dauerhaft in der Konfiguration gespeichert
+### Whitelist System
+- Manage players that should never be blocked
+- Simple commands to add/remove players
+- Whitelist is permanently stored in the configuration
 
-### 🔧 Administration & Debug
-- **Reload-Funktion** - Konfiguration ohne Server-Neustart aktualisieren
-- **Debug-Modus** - Detaillierte Logs für Fehlersuche und Monitoring
-- **Manual Check** - Einzelne Spieler-IPs manuell überprüfen
-- Umfassende Fehlerbehandlung und Logging
+### Administration & Debug
+- **Reload function** - update configuration without server restart
+- **Debug mode** - detailed logs for troubleshooting and monitoring
+- **Manual check** - manually check individual player IPs
+- Comprehensive error handling and logging
 
-### 📋 Commands
-- `/antivpn reload` - Konfiguration neu laden
-- `/antivpn debug` - Debug-Modus ein/ausschalten  
-- `/antivpn check <Spieler>` - IP eines Online-Spielers überprüfen
-- `/antivpn whitelist add <Name>` - Spieler zur Whitelist hinzufügen
-- `/antivpn whitelist remove <Name>` - Spieler von Whitelist entfernen
-- `/antivpn whitelist list` - Alle Whitelist-Einträge anzeigen
+### Commands
+- `/antivpn reload` - Reload configuration
+- `/antivpn debug` - Toggle debug mode on/off
+- `/antivpn check <player>` - Check the IP of an online player
+- `/antivpn whitelist add <name>` - Add player to whitelist
+- `/antivpn whitelist remove <name>` - Remove player from whitelist
+- `/antivpn whitelist list` - Show all whitelist entries
 
-### ⚙️ Konfiguration
-- **Keine API-Key erforderlich** - Funktioniert sofort nach Installation
-- **Anpassbare Kick-Nachricht** - Personalisiere die Nachricht für blockierte Spieler
-- **Debug-Modus** - Ein/Aus schaltbar über Config oder Command
-- **Whitelist** - Vordefinierte Spieler in der Konfiguration
+### Configuration
+- **No API key required** - Works immediately after installation
+- **Customizable kick message** - Personalize the message for blocked players
+- **Debug mode** - Toggleable via config or command
+- **Whitelist** - Pre-defined players in the configuration
 
 ## Installation & Setup
 
-1. Plugin in den `plugins/` Ordner kopieren
-2. Server starten (erstellt automatisch `config.yml`)
-3. **Fertig!** - Keine weitere Konfiguration nötig
-4. Optional: Config anpassen und mit `/antivpn reload` neu laden
+1. Copy the plugin into the `plugins/` folder
+2. Start the server (automatically creates `config.yml`)
+3. **Done!** - No further configuration needed
+4. Optional: Adjust config and reload with `/antivpn reload`
 
-## API-Details
-- **Service**: fastasfuck.net (kostenlos)
-- **Keine Registrierung erforderlich**
-- **Keine Rate-Limits** für normale Nutzung
-- Cache-System reduziert API-Anfragen und verbessert Performance
+## API Details
+- **Service**: fastasfuck.net (free)
+- **No registration required**
+- **No rate limits** for normal usage
+- Cache system reduces API requests and improves performance
 
-### API-Antwort Beispiel
+### API Response Example
 ```json
 {
   "ip": "104.28.158.214",
@@ -73,25 +73,25 @@ Ein Minecraft Bukkit/Spigot Plugin, das VPN- und Proxy-Verbindungen automatisch 
 ```
 
 ## Permissions
-- `antivpn.admin` - Zugriff auf alle Plugin-Befehle (Standard: OP)
+- `antivpn.admin` - Access to all plugin commands (default: OP)
 
-## Kompatibilität
+## Compatibility
 - **Minecraft Version**: 1.21+
 - **Server Software**: Bukkit, Spigot, Paper
 - **Java Version**: 8+
 
-## Sicherheitsfeatures
-- Automatische Fehlerbehandlung bei API-Ausfällen
-- Graceful Behandlung von Player-Disconnects während der Überprüfung
-- Sichere JSON-Parsing der API-Antworten
-- User-Agent für API-Anfragen zur Identifikation
-- Robuste Cache-Implementierung
+## Security Features
+- Automatic error handling for API failures
+- Graceful handling of player disconnects during check
+- Secure JSON parsing of API responses
+- User-Agent for API requests for identification
+- Robust cache implementation
 
-## Vorteile gegenüber anderen Anti-VPN Plugins
-- ✅ **Kostenlos** - Keine API-Keys oder Registrierung erforderlich
-- ✅ **Sofort einsatzbereit** - Minimale Konfiguration
-- ✅ **Hohe Genauigkeit** - Moderne VPN-Erkennungstechnologie
-- ✅ **Performance-optimiert** - 24h Cache + asynchrone Verarbeitung
-- ✅ **Benutzerfreundlich** - Einfache Commands und Administration
+## Advantages over other Anti-VPN Plugins
+- ✅ **Free** - No API keys or registration required
+- ✅ **Ready to use** - Minimal configuration
+- ✅ **High accuracy** - Modern VPN detection technology
+- ✅ **Performance optimized** - 24h cache + asynchronous processing
+- ✅ **User-friendly** - Simple commands and administration
 
-Das Plugin bietet eine zuverlässige, performante und kostenlose Lösung zum Schutz deines Minecraft-Servers vor VPN/Proxy-Nutzern mit minimaler Konfiguration und maximaler Benutzerfreundlichkeit.
+This plugin provides a reliable, performant, and free solution to protect your Minecraft server from VPN/proxy users with minimal configuration and maximum ease of use.
