@@ -26,8 +26,8 @@ public class AntiVPN extends JavaPlugin implements Listener {
 
     private static final String API_URL = "https://api.fastasfuck.net/vpn/check/";
     private static final long CACHE_DURATION_MS = 24L * 60L * 60L * 1000L; // 24h
-    private static final int API_TIMEOUT_MS = 10_000; // 10 Sekunden
-    private static final long CACHE_CLEANUP_INTERVAL = 36_000L; // alle 30 Minuten (in Ticks)
+    private static final int API_TIMEOUT_MS = 10_000; // 10 seconds
+    private static final long CACHE_CLEANUP_INTERVAL = 36_000L; // every 30 minutes (in ticks)
 
     private String kickMessage;
     private List<String> whitelist;
@@ -41,19 +41,19 @@ public class AntiVPN extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::cleanExpiredCache,
                 CACHE_CLEANUP_INTERVAL, CACHE_CLEANUP_INTERVAL);
-        getLogger().info("AntiVPN Plugin aktiviert!");
-        getLogger().info("Verwende api.fastasfuck.net für VPN/Proxy Erkennung");
+        getLogger().info("AntiVPN plugin enabled!");
+        getLogger().info("Using api.fastasfuck.net for VPN/proxy detection");
     }
 
     private void loadConfigValues() {
         saveDefaultConfig();
         reloadConfig();
-        this.kickMessage = getConfig().getString("kick-message", "§cVPN/Proxy Verbindungen sind hier nicht erlaubt!");
+        this.kickMessage = getConfig().getString("kick-message", "§cVPN/Proxy connections are not allowed here!");
         this.whitelist = new ArrayList<>(getConfig().getStringList("whitelist"));
         this.debugMode = getConfig().getBoolean("debug-mode", false);
 
         if (debugMode) {
-            getLogger().info("Debug-Modus aktiviert");
+            getLogger().info("Debug mode enabled");
             getLogger().info("Whitelist: " + whitelist);
         }
     }
@@ -63,27 +63,27 @@ public class AntiVPN extends JavaPlugin implements Listener {
         String name = event.getName();
         String ip = event.getAddress().getHostAddress();
 
-        if (debugMode) getLogger().info("Spieler " + name + " verbindet sich von IP: " + ip);
+        if (debugMode) getLogger().info("Player " + name + " connecting from IP: " + ip);
 
         if (whitelist.contains(name)) {
-            if (debugMode) getLogger().info("Spieler " + name + " ist in der Whitelist - überspringe VPN-Check");
+            if (debugMode) getLogger().info("Player " + name + " is whitelisted - skipping VPN check");
             return;
         }
 
         try {
-            if (debugMode) getLogger().info("Starte VPN-Check für IP: " + ip);
+            if (debugMode) getLogger().info("Starting VPN check for IP: " + ip);
 
             boolean blocked = isBlockedIP(ip);
 
-            if (debugMode) getLogger().info("VPN-Check Ergebnis für " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
+            if (debugMode) getLogger().info("VPN check result for " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
 
             if (blocked) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
                         LegacyComponentSerializer.legacySection().deserialize(kickMessage));
-                getLogger().info("Spieler " + name + " wurde wegen VPN/Proxy abgelehnt. (" + ip + ")");
+                getLogger().info("Player " + name + " was rejected due to VPN/proxy. (" + ip + ")");
             }
         } catch (Exception e) {
-            getLogger().warning("VPN-Check für IP " + ip + " fehlgeschlagen, Spieler wird zugelassen: " + e.getMessage());
+            getLogger().warning("VPN check for IP " + ip + " failed, player will be allowed: " + e.getMessage());
             if (debugMode) e.printStackTrace();
         }
     }
@@ -93,11 +93,11 @@ public class AntiVPN extends JavaPlugin implements Listener {
 
         CacheEntry cached = cache.get(ip);
         if (cached != null && (now - cached.timestamp) < CACHE_DURATION_MS) {
-            if (debugMode) getLogger().info("Cache hit für IP " + ip + ": " + (cached.isVpn ? "VPN" : "Clean"));
+            if (debugMode) getLogger().info("Cache hit for IP " + ip + ": " + (cached.isVpn ? "VPN" : "Clean"));
             return cached.isVpn;
         }
 
-        if (debugMode) getLogger().info("API-Anfrage an: " + API_URL + ip);
+        if (debugMode) getLogger().info("API request to: " + API_URL + ip);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(API_URL + ip).openConnection();
         try {
@@ -107,7 +107,7 @@ public class AntiVPN extends JavaPlugin implements Listener {
             conn.setRequestProperty("User-Agent", "AntiVPN-Plugin/1.0");
 
             int responseCode = conn.getResponseCode();
-            if (debugMode) getLogger().info("API Response Code: " + responseCode);
+            if (debugMode) getLogger().info("API response code: " + responseCode);
 
             if (responseCode != 200) {
                 throw new Exception("API returned status code: " + responseCode);
@@ -121,12 +121,12 @@ public class AntiVPN extends JavaPlugin implements Listener {
                 response = sb.toString();
             }
 
-            if (debugMode) getLogger().info("API Response: " + response);
+            if (debugMode) getLogger().info("API response: " + response);
 
             JsonObject json = JsonParser.parseString(response).getAsJsonObject();
             boolean blocked = json.has("isVPN") && json.get("isVPN").getAsBoolean();
 
-            if (debugMode) getLogger().info("Finale Entscheidung für IP " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
+            if (debugMode) getLogger().info("Final decision for IP " + ip + ": " + (blocked ? "BLOCKED" : "ALLOWED"));
 
             cache.put(ip, new CacheEntry(blocked, now));
             return blocked;
@@ -138,7 +138,7 @@ public class AntiVPN extends JavaPlugin implements Listener {
     private void cleanExpiredCache() {
         long now = System.currentTimeMillis();
         cache.entrySet().removeIf(e -> (now - e.getValue().timestamp) >= CACHE_DURATION_MS);
-        if (debugMode) getLogger().info("Cache bereinigt. Aktuelle Einträge: " + cache.size());
+        if (debugMode) getLogger().info("Cache cleaned. Current entries: " + cache.size());
     }
 
     private static class CacheEntry {
@@ -153,7 +153,7 @@ public class AntiVPN extends JavaPlugin implements Listener {
 
     private boolean checkPermission(CommandSender sender) {
         if (!sender.hasPermission("antivpn.admin")) {
-            sender.sendMessage("§cKeine Berechtigung!");
+            sender.sendMessage("§cNo permission!");
             return false;
         }
         return true;
@@ -170,20 +170,20 @@ public class AntiVPN extends JavaPlugin implements Listener {
             case "reload" -> {
                 if (!checkPermission(sender)) return true;
                 loadConfigValues();
-                sender.sendMessage("§aAntiVPN Config wurde neu geladen!");
-                getLogger().info(sender.getName() + " hat die AntiVPN Config neu geladen.");
+                sender.sendMessage("§aAntiVPN config has been reloaded!");
+                getLogger().info(sender.getName() + " reloaded the AntiVPN config.");
             }
             case "debug" -> {
                 if (!checkPermission(sender)) return true;
                 debugMode = !debugMode;
                 getConfig().set("debug-mode", debugMode);
                 saveConfig();
-                sender.sendMessage("§aDebug-Modus " + (debugMode ? "aktiviert" : "deaktiviert"));
+                sender.sendMessage("§aDebug mode " + (debugMode ? "enabled" : "disabled"));
             }
             case "check" -> {
                 if (!checkPermission(sender)) return true;
                 if (args.length < 2) {
-                    sender.sendMessage("§eBenutzung: /antivpn check <Spieler>");
+                    sender.sendMessage("§eUsage: /antivpn check <player>");
                     return true;
                 }
                 handleCheck(sender, args[1]);
@@ -201,27 +201,27 @@ public class AntiVPN extends JavaPlugin implements Listener {
     private void handleCheck(CommandSender sender, String targetName) {
         Player target = Bukkit.getPlayer(targetName);
         if (target == null) {
-            sender.sendMessage("§cSpieler nicht gefunden!");
+            sender.sendMessage("§cPlayer not found!");
             return;
         }
 
         if (target.getAddress() == null) {
-            sender.sendMessage("§cKeine IP-Adresse für diesen Spieler verfügbar.");
+            sender.sendMessage("§cNo IP address available for this player.");
             return;
         }
 
         String ip = target.getAddress().getAddress().getHostAddress();
-        sender.sendMessage("§eÜberprüfe IP von " + targetName + " (" + ip + ")...");
+        sender.sendMessage("§eChecking IP of " + targetName + " (" + ip + ")...");
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 boolean blocked = isBlockedIP(ip);
                 Bukkit.getScheduler().runTask(this, () ->
-                    sender.sendMessage("§aErgebnis für " + targetName + ": " + (blocked ? "§cVPN/Proxy erkannt" : "§aKeine VPN/Proxy"))
+                    sender.sendMessage("§aResult for " + targetName + ": " + (blocked ? "§cVPN/Proxy detected" : "§aNo VPN/Proxy"))
                 );
             } catch (Exception e) {
                 Bukkit.getScheduler().runTask(this, () ->
-                    sender.sendMessage("§cFehler beim Überprüfen: " + e.getMessage())
+                    sender.sendMessage("§cError while checking: " + e.getMessage())
                 );
             }
         });
@@ -229,58 +229,58 @@ public class AntiVPN extends JavaPlugin implements Listener {
 
     private void handleWhitelist(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            sender.sendMessage("§eBenutzung: /antivpn whitelist <add|remove|list> [Name]");
+            sender.sendMessage("§eUsage: /antivpn whitelist <add|remove|list> [name]");
             return;
         }
 
         switch (args[1].toLowerCase()) {
             case "add" -> {
                 if (args.length < 3) {
-                    sender.sendMessage("§eBenutzung: /antivpn whitelist add <Name>");
+                    sender.sendMessage("§eUsage: /antivpn whitelist add <name>");
                     return;
                 }
                 String name = args[2];
                 if (whitelist.contains(name)) {
-                    sender.sendMessage("§e" + name + " ist bereits in der Whitelist.");
+                    sender.sendMessage("§e" + name + " is already on the whitelist.");
                 } else {
                     whitelist.add(name);
                     getConfig().set("whitelist", whitelist);
                     saveConfig();
-                    sender.sendMessage("§a" + name + " wurde zur Whitelist hinzugefügt.");
-                    getLogger().info("Whitelist: " + name + " hinzugefügt von " + sender.getName());
+                    sender.sendMessage("§a" + name + " has been added to the whitelist.");
+                    getLogger().info("Whitelist: " + name + " added by " + sender.getName());
                 }
             }
             case "remove" -> {
                 if (args.length < 3) {
-                    sender.sendMessage("§eBenutzung: /antivpn whitelist remove <Name>");
+                    sender.sendMessage("§eUsage: /antivpn whitelist remove <name>");
                     return;
                 }
                 String name = args[2];
                 if (whitelist.remove(name)) {
                     getConfig().set("whitelist", whitelist);
                     saveConfig();
-                    sender.sendMessage("§c" + name + " wurde von der Whitelist entfernt.");
-                    getLogger().info("Whitelist: " + name + " entfernt von " + sender.getName());
+                    sender.sendMessage("§c" + name + " has been removed from the whitelist.");
+                    getLogger().info("Whitelist: " + name + " removed by " + sender.getName());
                 } else {
-                    sender.sendMessage("§e" + name + " ist nicht in der Whitelist.");
+                    sender.sendMessage("§e" + name + " is not on the whitelist.");
                 }
             }
             case "list" -> {
                 if (whitelist.isEmpty()) {
-                    sender.sendMessage("§7Die Whitelist ist leer.");
+                    sender.sendMessage("§7The whitelist is empty.");
                 } else {
                     sender.sendMessage("§aWhitelist: §f" + String.join(", ", whitelist));
                 }
             }
-            default -> sender.sendMessage("§eBenutzung: /antivpn whitelist <add|remove|list> [Name]");
+            default -> sender.sendMessage("§eUsage: /antivpn whitelist <add|remove|list> [name]");
         }
     }
 
     private void sendUsage(CommandSender sender) {
-        sender.sendMessage("§eBenutzung:");
-        sender.sendMessage("§e/antivpn reload §7- Config neu laden");
-        sender.sendMessage("§e/antivpn debug §7- Debug-Modus umschalten");
-        sender.sendMessage("§e/antivpn check <Spieler> §7- IP eines Spielers prüfen");
-        sender.sendMessage("§e/antivpn whitelist <add|remove|list> §7- Whitelist verwalten");
+        sender.sendMessage("§eUsage:");
+        sender.sendMessage("§e/antivpn reload §7- Reload config");
+        sender.sendMessage("§e/antivpn debug §7- Toggle debug mode");
+        sender.sendMessage("§e/antivpn check <player> §7- Check a player's IP");
+        sender.sendMessage("§e/antivpn whitelist <add|remove|list> §7- Manage whitelist");
     }
 }

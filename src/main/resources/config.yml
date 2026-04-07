@@ -1,9 +1,9 @@
-# Nachricht beim Kick, wenn ein Spieler mit VPN/Proxy joint
-kick-message: "§cVerbindungen über VPN oder Proxy sind nicht erlaubt!"
+# Message shown when a player is kicked for using a VPN/proxy
+kick-message: "§cConnections via VPN or proxy are not allowed!"
 
-# Debug-Modus für detaillierte Logs
+# Debug mode for detailed logs
 debug-mode: false
 
-# Whitelist: Spieler, die niemals blockiert werden
+# Whitelist: Players that will never be blocked
 whitelist:
   - "Basti20999"
