@@ -1,14 +1,17 @@
 name: AntiVPN
-version: '1.0'
+version: '1.1'
 main: com.basti20999.antiVpn.AntiVPN
 api-version: '1.21'
 authors: [ Basti20999 ]
 commands:
   antivpn:
-    description: AntiVPN commands
-    usage: /antivpn <reload|whitelist>
+    description: AntiVPN admin commands
+    usage: /antivpn <reload|debug|check|whitelist|stats|cache|help>
     permission: antivpn.admin
 permissions:
   antivpn.admin:
-    description: Access to all AntiVPN commands
+    description: Access to all AntiVPN commands.
+    default: op
+  antivpn.notify:
+    description: Receive in-game broadcasts when a connection is blocked.
     default: op
