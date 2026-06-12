@@ -1,0 +1,20 @@
+name: AntiVPN
+version: '${project.version}'
+main: com.basti20999.antivpn.paper.AntiVPNPaper
+api-version: '1.21'
+authors: [ Basti20999 ]
+description: Blocks VPN/proxy connections before they join.
+website: https://github.com/Basti20999/anti-vpn
+commands:
+  antivpn:
+    description: AntiVPN admin commands
+    usage: /antivpn <reload|debug|check|whitelist|stats|cache|help>
+    permission: antivpn.admin
+    aliases: [ avpn ]
+permissions:
+  antivpn.admin:
+    description: Access to all AntiVPN commands.
+    default: op
+  antivpn.notify:
+    description: Receive in-game broadcasts when a connection is blocked.
+    default: op

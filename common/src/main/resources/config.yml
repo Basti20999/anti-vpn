@@ -1,0 +1,78 @@
+# AntiVPN — configuration file
+# Messages use MiniMessage syntax (https://docs.advntr.dev/minimessage/format.html).
+# Placeholders (e.g. <player>, <ip>, <source>) are substituted before parsing.
+
+api:
+  # VPN-detection endpoint. If the URL contains "{ip}" it is replaced with the
+  # address being checked; otherwise the address is appended to the URL.
+  url: "https://api.fastasfuck.net/vpn/check/"
+  # The JSON field holding the verdict. Dots descend into nested objects, so
+  # other providers work too (e.g. "security.vpn" for vpnapi.io). Booleans,
+  # non-zero numbers and the strings "true"/"yes"/"1" count as VPN.
+  response-field: "isVPN"
+  # Total request timeout in milliseconds.
+  timeout-ms: 5000
+  # Number of additional attempts after the first failure (0 = no retries).
+  retries: 1
+  # Base backoff between retries in ms; actual delay is backoff-ms * attempt.
+  backoff-ms: 500
+
+cache:
+  # How long a VPN/clean verdict is cached, in hours.
+  duration-hours: 24
+  # Maximum number of cached verdicts (0 = unlimited). Protects memory when
+  # bots connect from many different addresses.
+  max-entries: 50000
+  # How often expired entries are purged, in minutes.
+  cleanup-interval-minutes: 30
+
+# Behavior when all API attempts fail:
+#   allow - let the player in (fail-open, default)
+#   deny  - kick the player (fail-closed)
+fail-mode: allow
+
+# Skip checks for loopback, LAN and other private addresses. Avoids pointless
+# API calls in dev setups and behind proxies without IP forwarding.
+skip-private-ips: true
+
+# Broadcast a message to staff (players with the antivpn.notify permission)
+# when a connection is blocked.
+notify-admins: true
+
+# Verbose logging for troubleshooting. /antivpn debug toggles this at runtime
+# without persisting it.
+debug-mode: false
+
+# Player names that bypass the VPN check (case-insensitive).
+whitelist:
+  - "Basti20999"
+
+# Addresses that are always allowed in. Exact IPs and CIDR ranges
+# (e.g. "203.0.113.7", "10.0.0.0/8", "2001:db8::/32") are supported.
+ip-whitelist: []
+
+# Addresses that are always denied (checked before the whitelists).
+# Exact IPs and CIDR ranges are supported.
+ip-blacklist: []
+
+messages:
+  kick:                 "<red>VPN/Proxy connections are not allowed here.</red>"
+  no-permission:        "<red>No permission.</red>"
+  reloaded:             "<green>AntiVPN config reloaded.</green>"
+  debug-toggled:        "<green>Debug mode <yellow><state></yellow> (runtime only — set debug-mode in config.yml to persist).</green>"
+  check-start:          "<yellow>Checking <player> (<ip>)...</yellow>"
+  check-result-vpn:     "<red><player>: VPN/Proxy detected (<source>).</red>"
+  check-result-clean:   "<green><player>: clean (<source>).</green>"
+  check-error:          "<red>Check failed: <error></red>"
+  check-invalid-target: "<red><target> is not an online player or a valid IP address.</red>"
+  no-ip:                "<red>No IP address available for this player.</red>"
+  whitelist-added:      "<green><name> added to the whitelist.</green>"
+  whitelist-removed:    "<red><name> removed from the whitelist.</red>"
+  whitelist-exists:     "<yellow><name> is already whitelisted.</yellow>"
+  whitelist-missing:    "<yellow><name> is not on the whitelist.</yellow>"
+  whitelist-empty:      "<gray>The whitelist is empty.</gray>"
+  whitelist-list:       "<green>Whitelist:</green> <white><names></white>"
+  stats:                "<green>AntiVPN stats:</green> blocks=<white><blocks></white> cacheSize=<white><cacheSize></white> hitRate=<white><hitRate></white> apiCalls=<white><apiCalls></white> apiErrors=<white><apiErrors></white> avgApiMs=<white><avgMs></white> failMode=<white><failMode></white>"
+  cache-cleared:        "<green>Cache cleared (<n> entries removed).</green>"
+  cache-size:           "<green>Cache size: <white><n></white></green>"
+  admin-notify:         "<yellow>[AntiVPN]</yellow> blocked <red><player></red> (<white><ip></white>) via <white><source></white>"
